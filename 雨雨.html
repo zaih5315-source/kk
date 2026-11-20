@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>冬至祝福</title>
+<style>
+*{margin:0;padding:0}
+body{
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:#000;
+}
+.text-item{
+  position:absolute;
+  color:#fff;
+  font-size:18px;
+  white-space:nowrap;
+}
+canvas{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;
+}
+</style>
+</head>
+<body>
+<canvas id="snow"></canvas>
+<script>
+// 弹窗
+if(!confirm("❄️ 你有一份冬至祝福，是否收下？")){
+  document.body.innerHTML="<div style='color:#fff;text-align:center;margin-top:50%;'>没关系，祝你平安顺遂</div>";
+}else{
+  // 冬至祝福语
+  const words = [
+    "冬至大如年，人间小团圆",
+    "吃饺子不冻耳朵🥟",
+    "昼短夜长，愿温暖相伴",
+    "寒来暑往，秋收冬藏",
+    "愿你岁岁平安✨",
+    "往后白昼渐长，好运渐多",
+    "天冷记得添衣",
+    "万事皆顺意",
+    "家人安康",
+    "烦恼清零，喜乐常在",
+    "冬至安康❄️",
+    "平安喜乐，得偿所愿"
+  ];
+  // 飘字
+  function createText(){
+    const div = document.createElement("div");
+    div.className="text-item";
+    div.innerText = words[Math.floor(Math.random()*words.length)];
+    let x = Math.random()*window.innerWidth;
+    let y = window.innerHeight;
+    div.style.left = x + "px";
+    div.style.top = y + "px";
+    document.body.appendChild(div);
+    let speedX = (Math.random()-0.5)*2;
+    let speedY = -Math.random()*2 -1;
+    function move(){
+      x += speedX;
+      y += speedY;
+      div.style.left = x+"px";
+      div.style.top = y+"px";
+      if(y < -50){
+        div.remove();
+        return;
+      }
+      requestAnimationFrame(move);
+    }
+    move();
+  }
+  setInterval(createText,300);
+}
+
+// 雪花
+const canvas = document.getElementById('snow');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let snows = [];
+class Snow{
+  constructor(){
+    this.x = Math.random()*canvas.width;
+    this.y = Math.random()*-canvas.height;
+    this.r = Math.random()*2+1;
+    this.speed = Math.random()+0.4;
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle="#fff";
+    ctx.fill();
+  }
+  update(){
+    this.y += this.speed;
+    if(this.y>canvas.height){
+      this.y=-10;
+      this.x=Math.random()*canvas.width;
+    }
+  }
+}
+for(let i=0;i<120;i++) snows.push(new Snow());
+function loop(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  snows.forEach(s=>{s.draw();s.update()});
+  requestAnimationFrame(loop);
+}
+loop();
+window.onresize=()=>{
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+}
+</script>
+</body>
+</html>
